@@ -91,19 +91,20 @@ else:
 
 image_path = IMAGES_DIR / image_name
 
-# -------------------------------------------------
-# Create the window
-# -------------------------------------------------
 root = tk.Tk()
 root.title("Marvel Rivals - Lord Checker")
 root.resizable(False, False)
 
-# Load and display image
 try:
     img = Image.open(image_path)
-    # Optional: resize if images are too big
-    img = img.resize((700, 700), Image.Resampling.LANCZOS)
-    photo = ImageTk.PhotoImage(img)
+
+    if Chosen["name"] == "The Thing":
+        img = img.resize((1920, 1080), Image.Resampling.LANCZOS)  # bigger size
+    else:
+        img = img.resize((700, 700), Image.Resampling.LANCZOS)    # normal size
+
+    photo = ImageTk.PhotoImage(img)   # ← this must be outside the if/else
+
 except Exception as e:
     messagebox.showerror("Error", f"Could not load image:\n{image_path}\n\n{e}")
     root.destroy()
@@ -115,9 +116,6 @@ label_img.pack(padx=20, pady=10)
 label_status = tk.Label(root, text=status_text, font=("Arial", 12))
 label_status.pack(pady=5)
 
-# -------------------------------------------------
-# Buttons
-# -------------------------------------------------
 def make_lord():
     if Chosen["is_lord"]:
         messagebox.showinfo("Already Lord", f"{Chosen['name']} is already a Lord!")
@@ -126,12 +124,11 @@ def make_lord():
     Chosen["is_lord"] = True
     Chosen["lord_date"] = str(date.today())
 
-    # Save to JSON
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(Heroes, f, indent=4, ensure_ascii=False)
 
     messagebox.showinfo("Success", f"{Chosen['name']} is now a LORD!\nDate: {Chosen['lord_date']}")
-    root.destroy()   # close the window
+    root.destroy()  
 
 def close_window():
     root.destroy()
@@ -146,5 +143,4 @@ if not Chosen["is_lord"]:
 btn_no = tk.Button(btn_frame, text="Close", width=15, command=close_window)
 btn_no.pack(side="left", padx=10)
 
-# Start the GUI
 root.mainloop()
